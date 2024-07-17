@@ -102,10 +102,6 @@ class Parser:
         elif isinstance(node, AST.NumNode):
             return int(node.value)
 
-    @property
-    def Nodes(self):
-        return self.__root
-
     @staticmethod
     def __summator(arr: list):
         res = 0
