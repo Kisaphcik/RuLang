@@ -12,17 +12,16 @@ class TokenType:
 
 
 class TokensEnum:
-    STRING = TokenType("STRING", "\"[а-яА-Я0-9]*\"")
+    STRING = TokenType("STRING", "\"[а-яА-Я0-9!`<>~@#$%^&|№;%:?]*\"")
     FUNC = TokenType("FUNC", "[а-яА-Я]*\\(")
     VAR = TokenType("VAR", "[а-яА-Я]*")
     NUM = TokenType("NUM", "[0-9]*")
     SEMICOLON = TokenType("SEMICOLON", ";")
     LPAR = TokenType("LPAR", "\\(")
     RPAR = TokenType("RPAR", "\\)")
-    QUOTE = TokenType("RPAR", "\"")
     SPACE = TokenType("SPACE", "[ \\n\\t\\r]")
     COMMA = TokenType("COMMA", ",")
 
     @classmethod
     def getTypes(cls):
-        return [cls.STRING, cls.FUNC, cls.VAR, cls.NUM, cls.SEMICOLON, cls.LPAR, cls.RPAR, cls.QUOTE, cls.SPACE, cls.COMMA]
+        return [cls.STRING, cls.FUNC, cls.VAR, cls.NUM, cls.SEMICOLON, cls.LPAR, cls.RPAR, cls.SPACE, cls.COMMA]

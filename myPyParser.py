@@ -65,21 +65,33 @@ class Parser:
     def __expr(self, node):
         if isinstance(node, AST.FuncNode):
             if node.operator == "вывод":
-                print(self.__expr(node.value[0]))
-            if node.operator == "создать":
+                print(" ".join([str(self.__expr(i)) for i in node.value]))
+            elif node.operator == "создать":
                 self.__stack[node.value[0].value] = None
                 return node.value[0].value
-            if node.operator == "присвоить":
+            elif node.operator == "присвоить":
                 self.__stack[node.value[0].value] = self.__expr(node.value[1])
                 return None
-            if node.operator == "сложить":
+            elif node.operator == "сложить":
                 return self.__expr(node.value[0]) + self.__expr(node.value[1])
-            if node.operator == "вычесть":
+            elif node.operator == "вычесть":
                 return self.__expr(node.value[0]) - self.__expr(node.value[1])
-            if node.operator == "умножить":
+            elif node.operator == "умножить":
                 return self.__expr(node.value[0]) * self.__expr(node.value[1])
-            if node.operator == "разделить":
+            elif node.operator == "разделить":
                 return self.__expr(node.value[0]) / self.__expr(node.value[1])
+            elif node.operator == "целчислДел":
+                return self.__expr(node.value[0]) // self.__expr(node.value[1])
+            elif node.operator == "степень":
+                return self.__expr(node.value[0]) ** self.__expr(node.value[1])
+            elif node.operator == "корень":
+                return self.__expr(node.value[0]) ** (1 / self.__expr(node.value[1]))
+            elif node.operator == "инк":
+                self.__stack[node.value[0].value] = self.__expr(node.value[0]) + 1
+                return self.__stack[node.value[0].value]
+            elif node.operator == "дек":
+                self.__stack[node.value[0].value] = self.__expr(node.value[0]) - 1
+                return self.__stack[node.value[0].value]
         elif isinstance(node, AST.VarNode):
             return self.__stack[node.value]
         elif isinstance(node, AST.StringNode):
