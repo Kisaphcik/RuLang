@@ -22,7 +22,10 @@ class TokensEnum:
     RPAR = TokenType("RPAR", "\\)")
     SPACE = TokenType("SPACE", "[ \\n\\t\\r]")
     COMMA = TokenType("COMMA", ",")
+    LFIPAR = TokenType("LPAR", "\\{")
+    RFIPAR = TokenType("RPAR", "\\}")
+    IFCMD = TokenType("RPAR", "if(")
 
     @classmethod
     def getTypes(cls):
-        return [cls.COMMENT, cls.STRING, cls.FUNC, cls.VAR, cls.NUM, cls.SEMICOLON, cls.LPAR, cls.RPAR, cls.SPACE, cls.COMMA]
+        return [cls.COMMENT, cls.STRING, cls.FUNC, cls.VAR, cls.NUM, cls.SEMICOLON, cls.LPAR, cls.RPAR, cls.SPACE, cls.COMMA, cls.LFIPAR, cls.RFIPAR]
