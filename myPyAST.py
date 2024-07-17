@@ -30,6 +30,6 @@ class StringNode(ExpressionNode):
 
 
 class FuncNode(ExpressionNode):
-    def __init__(self, operator, *operands):
+    def __init__(self, operator, operands):
         self.operator = operator
         self.value = operands

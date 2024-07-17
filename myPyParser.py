@@ -5,7 +5,9 @@ class Parser:
     def __init__(self, tokensList):
         self.__pos = 0
         self.__tokensList = tokensList
+        self.__stack = dict()
         self.__parse()
+        self.__run()
 
     def __match(self, *tokens):
         if self.__pos < len(self.__tokensList):
@@ -50,8 +52,40 @@ class Parser:
         string = self.__match(Tokens.TokensEnum.STRING)
         if string != None:
             return AST.StringNode(string.value)
+        func = self.__match(Tokens.TokensEnum.FUNC)
+        if func != None:
+            self.__pos -= 1
+            return self.__parseExpression()
         raise SyntaxError("Ожидался ввод цифры или переменной")
 
+    def __run(self):
+        for i in self.__root.codeString:
+            self.__expr(i)
+
+    def __expr(self, node):
+        if isinstance(node, AST.FuncNode):
+            if node.operator == "вывод":
+                print(self.__expr(node.value[0]))
+            if node.operator == "создать":
+                self.__stack[node.value[0].value] = None
+                return node.value[0].value
+            if node.operator == "присвоить":
+                self.__stack[node.value[0].value] = self.__expr(node.value[1])
+                return None
+            if node.operator == "сложить":
+                return self.__expr(node.value[0]) + self.__expr(node.value[1])
+            if node.operator == "вычесть":
+                return self.__expr(node.value[0]) - self.__expr(node.value[1])
+            if node.operator == "умножить":
+                return self.__expr(node.value[0]) * self.__expr(node.value[1])
+            if node.operator == "разделить":
+                return self.__expr(node.value[0]) / self.__expr(node.value[1])
+        elif isinstance(node, AST.VarNode):
+            return self.__stack[node.value]
+        elif isinstance(node, AST.StringNode):
+            return node.value[1:-1]
+        elif isinstance(node, AST.NumNode):
+            return int(node.value)
 
     @property
     def Nodes(self):

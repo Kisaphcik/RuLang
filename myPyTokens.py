@@ -12,7 +12,7 @@ class TokenType:
 
 
 class TokensEnum:
-    STRING = TokenType("STRING", "\"[а-яА-Я]*\"")
+    STRING = TokenType("STRING", "\"[а-яА-Я0-9]*\"")
     FUNC = TokenType("FUNC", "[а-яА-Я]*\\(")
     VAR = TokenType("VAR", "[а-яА-Я]*")
     NUM = TokenType("NUM", "[0-9]*")
