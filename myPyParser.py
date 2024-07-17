@@ -92,6 +92,9 @@ class Parser:
             elif node.operator == "дек":
                 self.__stack[node.value[0].value] = self.__expr(node.value[0]) - 1
                 return self.__stack[node.value[0].value]
+            elif node.operator == "ввод":
+                self.__stack[node.value[0].value] = input(self.__expr(node.value[1]) if len(node.value) > 1 else "")
+                return self.__stack[node.value[0].value]
         elif isinstance(node, AST.VarNode):
             return self.__stack[node.value]
         elif isinstance(node, AST.StringNode):

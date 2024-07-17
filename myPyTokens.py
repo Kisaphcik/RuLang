@@ -12,7 +12,8 @@ class TokenType:
 
 
 class TokensEnum:
-    STRING = TokenType("STRING", "\"[а-яА-Я0-9!`<>~@#$%^&|№;%:?]*\"")
+    COMMENT = TokenType("COMMENT", "//[ \\t\\rа-яА-Я0-9!`<>~@#$%^&|№;%:?,.]*")
+    STRING = TokenType("STRING", "\"[ \\n\\t\\rа-яА-Я0-9!`<>~@#$%^&|№;%:?,.]*\"")
     FUNC = TokenType("FUNC", "[а-яА-Я]*\\(")
     VAR = TokenType("VAR", "[а-яА-Я]*")
     NUM = TokenType("NUM", "[0-9]*")
@@ -24,4 +25,4 @@ class TokensEnum:
 
     @classmethod
     def getTypes(cls):
-        return [cls.STRING, cls.FUNC, cls.VAR, cls.NUM, cls.SEMICOLON, cls.LPAR, cls.RPAR, cls.SPACE, cls.COMMA]
+        return [cls.COMMENT, cls.STRING, cls.FUNC, cls.VAR, cls.NUM, cls.SEMICOLON, cls.LPAR, cls.RPAR, cls.SPACE, cls.COMMA]
