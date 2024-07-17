@@ -73,13 +73,13 @@ class Parser:
                 self.__stack[node.value[0].value] = self.__expr(node.value[1])
                 return None
             elif node.operator == "сложить":
-                return self.__expr(node.value[0]) + self.__expr(node.value[1])
+                return self.__summator([self.__expr(i) for i in node.value])
             elif node.operator == "вычесть":
-                return self.__expr(node.value[0]) - self.__expr(node.value[1])
+                return self.__minuser([self.__expr(i) for i in node.value])
             elif node.operator == "умножить":
-                return self.__expr(node.value[0]) * self.__expr(node.value[1])
+                return self.__multiplier([self.__expr(i) for i in node.value])
             elif node.operator == "разделить":
-                return self.__expr(node.value[0]) / self.__expr(node.value[1])
+                return self.__divisier([self.__expr(i) for i in node.value])
             elif node.operator == "целчислДел":
                 return self.__expr(node.value[0]) // self.__expr(node.value[1])
             elif node.operator == "степень":
@@ -102,3 +102,31 @@ class Parser:
     @property
     def Nodes(self):
         return self.__root
+
+    @staticmethod
+    def __summator(arr: list):
+        res = 0
+        for i in arr:
+            res += i
+        return res
+
+    @staticmethod
+    def __minuser(arr: list):
+        res = arr[0]
+        for i in arr[1:]:
+            res -= i
+        return res
+
+    @staticmethod
+    def __multiplier(arr: list):
+        res = arr[0]
+        for i in arr[1:]:
+            res *= i
+        return res
+
+    @staticmethod
+    def __divisier(arr: list):
+        res = arr[0]
+        for i in arr[1:]:
+            res /= i
+        return res
