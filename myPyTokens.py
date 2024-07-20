@@ -1,3 +1,5 @@
+import dataclasses
+
 class Token:
     def __init__(self, type, value, pos):
         self.type = type
@@ -5,11 +7,10 @@ class Token:
         self.pos = pos
 
 
+@dataclasses.dataclass
 class TokenType:
-    def __init__(self, name, regex):
-        self.name = name
-        self.regex = regex
-
+    name: str
+    regex: str
 
 class TokensEnum:
     COMMENT = TokenType("COMMENT", "//[ \\t\\rа-яА-Я0-9!`<>~@#$%^&|№;%:?,.]*")
