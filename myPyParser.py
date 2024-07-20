@@ -43,19 +43,29 @@ class Parser:
         raise Exception("Ошибка")
 
     def __parseVarOrNum(self):
-        var = self.__match(Tokens.TokensEnum.VAR)
-        if var != None:
-           return AST.VarNode(var.value)
-        num = self.__match(Tokens.TokensEnum.NUM)
-        if num != None:
-            return AST.NumNode(num.value)
-        string = self.__match(Tokens.TokensEnum.STRING)
-        if string != None:
-            return AST.StringNode(string.value)
-        func = self.__match(Tokens.TokensEnum.FUNC)
-        if func != None:
+        cheak = self.__match(Tokens.TokensEnum.VAR)
+        if cheak != None:
+           return AST.VarNode(cheak.value)
+        cheak = self.__match(Tokens.TokensEnum.NUM)
+        if cheak != None:
+            return AST.NumNode(cheak.value)
+        cheak = self.__match(Tokens.TokensEnum.STRING)
+        if cheak != None:
+            return AST.StringNode(cheak.value)
+        cheak = self.__match(Tokens.TokensEnum.FUNC)
+        if cheak != None:
             self.__pos -= 1
             return self.__parseExpression()
+        cheak = self.__match(Tokens.TokensEnum.LFIPAR)
+        if cheak != None:
+            root = AST.StatementNode()
+            while not self.__match(Tokens.TokensEnum.RFIPAR):
+                bodyString = self.__parseExpression()
+                self.__require(Tokens.TokensEnum.SEMICOLON)
+                root.addNode(bodyString)
+            self.__pos -= 1
+            self.__require(Tokens.TokensEnum.RFIPAR)
+            return root
         raise SyntaxError("Ожидался ввод цифры или переменной")
 
     def __run(self):
@@ -73,7 +83,10 @@ class Parser:
                 self.__stack[node.value[0].value] = self.__expr(node.value[1])
                 return None
             elif node.operator == "сложить":
-                return self.__summator([self.__expr(i) for i in node.value])
+                if isinstance(node.value[0], AST.NumNode):
+                    return self.__summator([self.__expr(i) for i in node.value])
+                else:
+                    return "".join([self.__expr(i) for i in node.value])
             elif node.operator == "вычесть":
                 return self.__minuser([self.__expr(i) for i in node.value])
             elif node.operator == "умножить":
@@ -103,12 +116,18 @@ class Parser:
                 return str(self.__expr(node.value[0]))
             elif node.operator == "вБул":
                 return bool(self.__expr(node.value[0]))
+            elif node.operator == "если":
+                if self.__expr(node.value[0]):
+                    self.__expr(node.value[1])
         elif isinstance(node, AST.VarNode):
             return self.__stack[node.value]
         elif isinstance(node, AST.StringNode):
             return node.value[1:-1]
         elif isinstance(node, AST.NumNode):
             return int(node.value)
+        elif isinstance(node, AST.StatementNode):
+            for k in node.codeString:
+                self.__expr(k)
 
     @staticmethod
     def __summator(arr: list):
