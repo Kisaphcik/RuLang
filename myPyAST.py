@@ -33,3 +33,9 @@ class FuncNode(ExpressionNode):
     def __init__(self, operator, operands):
         self.operator = operator
         self.value = operands
+
+
+class FuncWithBodyNode(ExpressionNode):
+    def __init__(self, condition, body):
+        self.condition = condition
+        self.body = body

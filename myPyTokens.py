@@ -24,7 +24,7 @@ class TokensEnum:
     COMMA = TokenType("COMMA", ",")
     LFIPAR = TokenType("LPAR", "\\{")
     RFIPAR = TokenType("RPAR", "\\}")
-    IFCMD = TokenType("RPAR", "if(")
+    IFCMD = TokenType("RPAR", "если(")
 
     @classmethod
     def getTypes(cls):

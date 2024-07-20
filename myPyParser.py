@@ -12,13 +12,13 @@ class Parser:
     def __match(self, *tokens):
         if self.__pos < len(self.__tokensList):
             currentToken = self.__tokensList[self.__pos]
-            if currentToken.type in list(map(lambda x: x, tokens[0] if isinstance(tokens[0], tuple) else tokens)):
+            if currentToken.type in tokens:
                 self.__pos += 1
                 return currentToken
         return None
 
     def __require(self, *tokens):
-        token = self.__match(tokens)
+        token = self.__match(*tokens)
         if (not token):
             raise SyntaxError(f"На позиции {self.__pos} ожидался токен(ы) {list(map(lambda x: x.name, tokens))}")
         return tokens[0]
@@ -40,7 +40,7 @@ class Parser:
                     break
             self.__require(Tokens.TokensEnum.RPAR)
             return AST.FuncNode(operator.value[:-1], value)
-        raise Exception("Error")
+        raise Exception("Ошибка")
 
     def __parseVarOrNum(self):
         var = self.__match(Tokens.TokensEnum.VAR)
@@ -95,6 +95,14 @@ class Parser:
             elif node.operator == "ввод":
                 self.__stack[node.value[0].value] = input(self.__expr(node.value[1]) if len(node.value) > 1 else "")
                 return self.__stack[node.value[0].value]
+            elif node.operator == "вЦелЧис":
+                return int(self.__expr(node.value[0]))
+            elif node.operator == "вПлавЧис":
+                return float(self.__expr(node.value[0]))
+            elif node.operator == "вСтроку":
+                return str(self.__expr(node.value[0]))
+            elif node.operator == "вБул":
+                return bool(self.__expr(node.value[0]))
         elif isinstance(node, AST.VarNode):
             return self.__stack[node.value]
         elif isinstance(node, AST.StringNode):
