@@ -1,5 +1,6 @@
 import myPyTokens as Tokens
 import myPyAST as AST
+from myPylexer import Lexer
 
 class Parser:
     def __init__(self, tokensList):
@@ -56,17 +57,16 @@ class Parser:
         if cheak != None:
             self.__pos -= 1
             return self.__parseExpression()
-        cheak = self.__match(Tokens.TokensEnum.LFIPAR)
+        cheak = self.__match(Tokens.TokensEnum.START)
         if cheak != None:
             root = AST.StatementNode()
-            while not self.__match(Tokens.TokensEnum.RFIPAR):
+            while not self.__match(Tokens.TokensEnum.END):
                 bodyString = self.__parseExpression()
                 self.__require(Tokens.TokensEnum.SEMICOLON)
                 root.addNode(bodyString)
             self.__pos -= 1
-            self.__require(Tokens.TokensEnum.RFIPAR)
+            self.__require(Tokens.TokensEnum.END)
             return root
-        raise SyntaxError("Ожидался ввод цифры или переменной")
 
     def __run(self):
         for i in self.__root.codeString:
@@ -77,28 +77,31 @@ class Parser:
             if node.operator == "вывод":
                 print(" ".join([str(self.__expr(i)) for i in node.value]))
             elif node.operator == "создать":
-                self.__stack[node.value[0].value] = None
+                if len(node.value) == 1:
+                    self.__stack[node.value[0].value] = None
+                else:
+                    self.__stack[node.value[0].value] = self.__expr(node.value[1])
                 return node.value[0].value
             elif node.operator == "присвоить":
                 self.__stack[node.value[0].value] = self.__expr(node.value[1])
                 return None
             elif node.operator == "сложить":
-                if isinstance(node.value[0], AST.NumNode):
-                    return self.__summator([self.__expr(i) for i in node.value])
+                if isinstance(self.__expr(node.value[0]), int) or isinstance(self.__expr(node.value[0]), float):
+                    return int(self.__summator([self.__expr(i) for i in node.value]))
                 else:
                     return "".join([self.__expr(i) for i in node.value])
             elif node.operator == "вычесть":
-                return self.__minuser([self.__expr(i) for i in node.value])
+                return int(self.__minuser([self.__expr(i) for i in node.value]))
             elif node.operator == "умножить":
-                return self.__multiplier([self.__expr(i) for i in node.value])
+                return int(self.__multiplier([self.__expr(i) for i in node.value]))
             elif node.operator == "разделить":
-                return self.__divisier([self.__expr(i) for i in node.value])
+                return float(self.__divisier([self.__expr(i) for i in node.value]))
             elif node.operator == "целчислДел":
-                return self.__expr(node.value[0]) // self.__expr(node.value[1])
+                return int(self.__expr(node.value[0]) // self.__expr(node.value[1]))
             elif node.operator == "степень":
-                return self.__expr(node.value[0]) ** self.__expr(node.value[1])
+                return int(self.__expr(node.value[0]) ** self.__expr(node.value[1]))
             elif node.operator == "корень":
-                return self.__expr(node.value[0]) ** (1 / self.__expr(node.value[1]))
+                return int(self.__expr(node.value[0]) ** (1 / self.__expr(node.value[1])))
             elif node.operator == "инк":
                 self.__stack[node.value[0].value] = self.__expr(node.value[0]) + 1
                 return self.__stack[node.value[0].value]
@@ -116,12 +119,42 @@ class Parser:
                 return str(self.__expr(node.value[0]))
             elif node.operator == "вБул":
                 return bool(self.__expr(node.value[0]))
+            elif node.operator == "равно":
+                return self.__expr(node.value[0]) == self.__expr(node.value[1])
+            elif node.operator == "неравно":
+                return self.__expr(node.value[0]) != self.__expr(node.value[1])
+            elif node.operator == "больше":
+                return self.__expr(node.value[0]) > self.__expr(node.value[1])
+            elif node.operator == "меньше":
+                return self.__expr(node.value[0]) < self.__expr(node.value[1])
+            elif node.operator == "большРавн":
+                return self.__expr(node.value[0]) >= self.__expr(node.value[1])
+            elif node.operator == "меньшРавн":
+                return self.__expr(node.value[0]) <= self.__expr(node.value[1])
+            elif node.operator == "и":
+                return self.__expr(node.value[0]) and self.__expr(node.value[1])
+            elif node.operator == "или":
+                return self.__expr(node.value[0]) or self.__expr(node.value[1])
+            elif node.operator == "не":
+                return not self.__expr(node.value[0])
             elif node.operator == "если":
                 if self.__expr(node.value[0]):
                     self.__expr(node.value[1])
                 else:
                     if len(node.value) == 3:
                         self.__expr(node.value[2])
+            elif node.operator == "пока":
+                while self.__expr(node.value[0]):
+                    self.__expr(node.value[1])
+            elif node.operator == "функция":
+                self.__stack[node.value[0].value] = node.value[-1]
+            elif self.__stack.get(node.operator):
+                self.__expr(self.__stack[node.operator])
+            elif node.operator == "импорт":
+                with open(f"{self.__expr(node.value[0])}.rl", 'r', encoding='utf-8') as file:
+                    mylexer = Lexer(file.read())
+                parser = Parser(mylexer.tokensList)
+                self.__stack = {**parser.stack, **self.__stack}
         elif isinstance(node, AST.VarNode):
             return self.__stack[node.value]
         elif isinstance(node, AST.StringNode):
@@ -159,3 +192,7 @@ class Parser:
         for i in arr[1:]:
             res /= i
         return res
+
+    @property
+    def stack(self):
+        return self.__stack

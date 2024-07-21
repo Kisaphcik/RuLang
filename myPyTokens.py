@@ -13,9 +13,9 @@ class TokenType:
     regex: str
 
 class TokensEnum:
-    COMMENT = TokenType("COMMENT", "//[ \\t\\rа-яА-Я0-9!`<>~@#$%^&|№;%:?,.]*")
-    STRING = TokenType("STRING", "\"[ \\n\\t\\rа-яА-Я0-9!`<>~@#$%^&|№;%:?,.]*\"")
-    FUNC = TokenType("FUNC", "[а-яА-Я]*\\(")
+    COMMENT = TokenType("COMMENT", "//[ \\t\\rа-яА-ЯA-Za-z0-9!`<>~@#$%^&|№;%:?,.\\+\\-]*")
+    STRING = TokenType("STRING", "\"[ \\n\\t\\rа-яА-Я0-9A-Za-z!`<>~@#$%^&|№;%:?,.\\+\\-]*\"")
+    FUNC = TokenType("FUNC", "[а-яА-ЯA-Za-z]*\\(")
     VAR = TokenType("VAR", "[а-яА-Я]*")
     NUM = TokenType("NUM", "[0-9]*")
     SEMICOLON = TokenType("SEMICOLON", ";")
@@ -23,9 +23,9 @@ class TokensEnum:
     RPAR = TokenType("RPAR", "\\)")
     SPACE = TokenType("SPACE", "[ \\n\\t\\r]")
     COMMA = TokenType("COMMA", ",")
-    LFIPAR = TokenType("LPAR", "\\{")
-    RFIPAR = TokenType("RPAR", "\\}")
+    START = TokenType("START", "\\начало")
+    END = TokenType("END", "\\конец")
 
     @classmethod
     def getTypes(cls):
-        return [cls.COMMENT, cls.LFIPAR, cls.RFIPAR, cls.STRING, cls.FUNC, cls.VAR, cls.NUM, cls.SEMICOLON, cls.LPAR, cls.RPAR, cls.SPACE, cls.COMMA]
+        return [cls.COMMENT, cls.START, cls.END, cls.STRING, cls.FUNC, cls.VAR, cls.NUM, cls.SEMICOLON, cls.LPAR, cls.RPAR, cls.SPACE, cls.COMMA]
