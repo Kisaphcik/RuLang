@@ -119,6 +119,9 @@ class Parser:
             elif node.operator == "если":
                 if self.__expr(node.value[0]):
                     self.__expr(node.value[1])
+                else:
+                    if len(node.value) == 3:
+                        self.__expr(node.value[2])
         elif isinstance(node, AST.VarNode):
             return self.__stack[node.value]
         elif isinstance(node, AST.StringNode):
